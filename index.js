@@ -98,6 +98,7 @@ app.get("/mappacks", function(req, res) { res.sendFile(__dirname + "/html/mappac
 app.get("/messages", function(req, res) { res.sendFile(__dirname + "/html/messages.html") })
 app.get("/search", function(req, res) { res.sendFile(__dirname + "/html/filters.html") })
 app.get("/search/:text", function(req, res) { res.sendFile(__dirname + "/html/search.html") })
+app.get("/levelviewer/:id", function(req, res) { res.sendFile(__dirname + "/html/levelviewer.html") })
 
 
 // API
