@@ -189,10 +189,15 @@
 
             ctx.globalCompositeOperation='source-over';
             blocks.forEach(b => {
-                drawObject(b[1], b[2] - x, canvas.height - b[3] - y, b[6], b[4], b[5], b[32])
-                ctx.font = '12px serif'
-                ctx.fillStyle = "white"
-                // ctx.fillText(b[6] ? b[1] : 0, b[2] - x, canvas.height - b[3] - y)
+                if (b[2]-x < 0 || b[2] - x > canvas.width) {
+                    
+                } else {
+                    drawObject(b[1], b[2] - x, canvas.height - b[3] - y, b[6], b[4], b[5], b[32])
+                    ctx.font = '12px serif'
+                    ctx.fillStyle = "white"
+                    // ctx.fillText(b[6] ? b[1] : 0, b[2] - x, canvas.height - b[3] - y)
+                }
+                
                 
             })
             
