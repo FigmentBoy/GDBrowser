@@ -39,7 +39,20 @@
         canvas.style.top = 0;
         canvas.style.left = 0;
         
+        
+        const tempCanvas = document.createElement('CANVAS');
+        document.body.appendChild(tempCanvas);
+        tempCanvas.style.zIndex = '-100';
 
+        tempCanvas.width = window.innerWidth;
+        tempCanvas.height = window.innerHeight;
+
+
+        tempCanvas.style.position = 'absolute';
+        tempCanvas.style.top = 0;
+        tempCanvas.style.left = 0;
+
+        const dctx = tempCanvas.getContext('2d');
 
         let sprites = null;
 
@@ -52,25 +65,21 @@
         $.getJSON('/assets/levelviewer/objects.json', data => {
             objects = data;
         })
+
+        let objMod = null;
         let time = 0;
         function drawObject(objectid, xl, yl, rot, flipX, flipY, scales) {
             x = xl + 15;
             y = yl - 15;
             object = objects[objectid];
             ctx.save();
+            dctx.save();
             ctx.translate(x, y);
+            dctx.translate(x, y);
+            
             if (object) {
-                object.layers.forEach(layer => {        
-                ctx.translate(layer.x, layer.y);
-                ctx.rotate((layer.rotation * Math.PI/180) + (rot * Math.PI/180));
-                
-                if (`${layer.scale}`.split(',').length == 2) {
-                    ctx.scale(`${layer.scale}`.split(',')[0], `${layer.scale}`.split(',')[1]);
-                } else {
-                    ctx.scale(layer.scale, layer.scale);
-                }
-
-                sprite = sprites[layer.sprite];
+                sprite = sprites[`${object[0]}.png`];
+                if (!sprite) console.log(`${objectid}: ${object}`);
 
                 ctx.scale(scales, scales);
 
@@ -80,27 +89,18 @@
                 cy = -sprite.height/2 * factor;
                 cw = sprite.width * factor;
                 ch = sprite.height * factor;
-
+                ctx.rotate(rot * Math.PI/180);
                 if (flipX) {
                     ctx.scale(-1, 1);
+                    dctx.scale(-1, 1);
                 }
 
                 if (flipY) {
                     ctx.scale(1, -1);
+                    dctx.scale(1, -1);
                 }
+
                 
-                if (layer.color == 1) {
-                    base = {h: 0, s: 100, l: 100}
-
-                    change = {h: 170 - base.h, s: 100 + (base.s - 21.3), l: 100 + (51.2 - base.l)}
-                    ctx.filter =  ''
-
-                } else if (layer.color == 3) {
-                    ctx.filter = "brightness(0%)";
-                } else {
-                    ctx.filter = "none";
-                }
-        
 
                 if (sprite.rotation == 0) {
                     ctx.drawImage(spritesheet[sprite.spritesheet], sprite.x, sprite.y, sprite.width, sprite.height, cx, cy, cw, ch);
@@ -110,22 +110,19 @@
                     ctx.rotate(-270 * Math.PI/180)
                 }
                 
+
+    
                 if (flipX) {
                     ctx.scale(-1, 1);
+                    dctx.scale(-1, 1);
                 }
 
                 if (flipY) {
                     ctx.scale(1, -1);
+                    dctx.scale(1, -1);
                 }
 
-                ctx.rotate(-(layer.rotation * Math.PI/180) - (rot * Math.PI/180));
-                ctx.translate(-layer.x, -layer.y);
-                if (`${layer.scale}`.split(',').length == 2) {
-                    ctx.scale(`1/${layer.scale}`.split(',')[0], `1/${layer.scale}`.split(',')[1]);
-                } else {
-                    ctx.scale(1/layer.scale, 1/layer.scale);
-                }
-            })
+                ctx.rotate(-rot * Math.PI/180);
             
         } else {
             // console.log(objectid);
@@ -147,7 +144,8 @@
         let gImg = new Image;
         let gFact = 1;
         let xLength = 0;
-        fetch(target).then(res => res.json()).then(lvl => {
+
+        $(() => {fetch(target).then(res => res.json()).then(lvl => {
             data = lvl.data.split(';');
             data.shift();
             
@@ -175,83 +173,37 @@
             bgImg.src = `/assets/levelviewer/game_bg_${ ('0' + lvl.settings.background).slice(-2) }_001-uhd.png`;
             gImg.src = `/assets/levelviewer/groundSquare_${ ('0' + lvl.settings.ground).slice(-2) }_001-uhd.png`;
 
-            let bgFact = canvas.width/bgImg.width;
-
-            ctx.drawImage(bgImg, 0, 0, bgImg.width * bgFact, bgImg.height * bgFact)
-            bgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            
-            gFact = 215 / gImg.height;
-
-            ctx.drawImage(gImg, 0, 0, gImg.width * gFact, gImg.height * gFact)
-            gData = ctx.getImageData(0, 0, gImg.width * gFact, gImg.height * gFact);
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            getBgInfo(colors[0].r, colors[0].g, colors[0].b);
-            getGInfo(colors[1].r, colors[1].g, colors[1].b)
-
             drawLevel(levelX, levelY)
             time = 100
-        })
+        })})
 
-        function getBgInfo(rs, gs, bs) {
-            bdata = bgData.data;
 
-            let brightness = 150;
-
-            for (i=0; i<bdata.length; i+=4) {
-                bdata[i] = ((bgData.data[i]/brightness) * (rs / 255)) * 255;
-                bdata[i+1] = ((bgData.data[i + 1]/brightness) * (gs / 255)) * 255;
-                bdata[i+2] = ((bgData.data[i + 2]/brightness) * (bs / 255)) * 255;
-                bdata[i+3] = 255;
-            }
-        }
-
-        function getGInfo(rs, gs, bs) {
-            gPixel = gData.data;
-
-            let brightness = 255;
-
-            for (i=0; i<gPixel.length; i+=4) {
-                gPixel[i] = ((gData.data[i]/brightness) * (rs / 255)) * 255;
-                gPixel[i+1] = ((gData.data[i + 1]/brightness) * (gs / 255)) * 255;
-                gPixel[i+2] = ((gData.data[i + 2]/brightness) * (bs / 255)) * 255;
-                gPixel[i+3] = 255;
-            }
-        }
-
-        let bgImgD;
-        let bgData;
-        let bdata;
-        let gImgD;
-        let gData;
-        let gPixel;
         function drawLevel(x, y, scale) {
             clear();
-            
-
-            
-
-            let newImgData = bgData.data;
-
         
-            bgImgD = new ImageData(bdata, canvas.width, canvas.height);
-            gImgD = new ImageData(gPixel, gImg.width * gFact, gImg.height * gFact);
+            ctx.globalCompositeOperation='hard-light';
+            ctx.fillStyle = `rgb(${colors[0].r}, ${colors[0].g}, ${colors[0].b})`;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            let bfact = canvas.width / bgImg.width;
+            ctx.drawImage(bgImg, 0, 0, bgImg.width * bfact, bgImg.height * bfact)
 
-            ctx.putImageData(bgImgD, 0, 0);
-            
-            
-
+            ctx.globalCompositeOperation='source-over';
             blocks.forEach(b => {
                 drawObject(b[1], b[2] - x, canvas.height - b[3] - y, b[6], b[4], b[5], b[32])
                 ctx.font = '12px serif'
                 ctx.fillStyle = "white"
-                // ctx.fillText(b[1] ? b[1] : 0, b[2] - x, canvas.height - b[3] - y)
+                // ctx.fillText(b[6] ? b[1] : 0, b[2] - x, canvas.height - b[3] - y)
                 
             })
             
+            
+            ctx.globalCompositeOperation='source-over';
+            ctx.fillStyle = `rgb(${colors[1].r}, ${colors[1].g}, ${colors[1].b})`;
+            ctx.fillRect(0, canvas.height - y - 15, canvas.width, canvas.height - y + 200)
+
+            ctx.globalCompositeOperation='multiply';
             for (i=0; i< Math.ceil(xLength/215); i++) {
-                ctx.putImageData(gImgD, (i*215)-x, canvas.height - y - 15);
+                ctx.drawImage(gImg, (i*215)-x, canvas.height - y - 15, 215, 215);
             }
         }
 
