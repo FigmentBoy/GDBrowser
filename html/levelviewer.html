@@ -79,51 +79,53 @@
             
             if (object) {
                 sprite = sprites[`${object[0]}.png`];
-                if (!sprite) console.log(`${objectid}: ${object}`);
-
-                ctx.scale(scales, scales);
-
-                let factor = 0.25;
-
-                cx = -sprite.width/2 * factor;
-                cy = -sprite.height/2 * factor;
-                cw = sprite.width * factor;
-                ch = sprite.height * factor;
-                ctx.rotate(rot * Math.PI/180);
-                if (flipX) {
-                    ctx.scale(-1, 1);
-                    dctx.scale(-1, 1);
-                }
-
-                if (flipY) {
-                    ctx.scale(1, -1);
-                    dctx.scale(1, -1);
-                }
-
-                
-
-                if (sprite.rotation == 0) {
-                    ctx.drawImage(spritesheet[sprite.spritesheet], sprite.x, sprite.y, sprite.width, sprite.height, cx, cy, cw, ch);
+                if (!sprite) {
+                    console.log(`${objectid}: ${object}`);
                 } else {
-                    ctx.rotate(270 * Math.PI/180)
-                    ctx.drawImage(spritesheet[sprite.spritesheet], sprite.x, sprite.y, sprite.height, sprite.width, cy, cx, ch, cw);
-                    ctx.rotate(-270 * Math.PI/180)
-                }
-                
 
-    
-                if (flipX) {
-                    ctx.scale(-1, 1);
-                    dctx.scale(-1, 1);
-                }
+                    ctx.scale(scales, scales);
 
-                if (flipY) {
-                    ctx.scale(1, -1);
-                    dctx.scale(1, -1);
-                }
+                    let factor = 0.25;
 
-                ctx.rotate(-rot * Math.PI/180);
-            
+                    cx = -sprite.width/2 * factor;
+                    cy = -sprite.height/2 * factor;
+                    cw = sprite.width * factor;
+                    ch = sprite.height * factor;
+                    ctx.rotate(rot * Math.PI/180);
+                    if (flipX) {
+                        ctx.scale(-1, 1);
+                        dctx.scale(-1, 1);
+                    }
+
+                    if (flipY) {
+                        ctx.scale(1, -1);
+                        dctx.scale(1, -1);
+                    }
+
+                    
+
+                    if (sprite.rotation == 0) {
+                        ctx.drawImage(spritesheet[sprite.spritesheet], sprite.x, sprite.y, sprite.width, sprite.height, cx, cy, cw, ch);
+                    } else {
+                        ctx.rotate(270 * Math.PI/180)
+                        ctx.drawImage(spritesheet[sprite.spritesheet], sprite.x, sprite.y, sprite.height, sprite.width, cy, cx, ch, cw);
+                        ctx.rotate(-270 * Math.PI/180)
+                    }
+                    
+
+        
+                    if (flipX) {
+                        ctx.scale(-1, 1);
+                        dctx.scale(-1, 1);
+                    }
+
+                    if (flipY) {
+                        ctx.scale(1, -1);
+                        dctx.scale(1, -1);
+                    }
+
+                    ctx.rotate(-rot * Math.PI/180);
+                }
         } else {
             // console.log(objectid);
         }
