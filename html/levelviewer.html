@@ -124,27 +124,30 @@
 
                     if (sprite.spritesheet == 1) {
                         
-                        ctx.globalCompositeOperation = 'source-atop'
 
                         ctx.globalAlpha = opacity
-                        ctx.drawImage(spritesheet[sprite.spritesheet].pw, sx, sy, sw, sh, cx, cy, cw, ch);
+                        ctx.globalCompositeOperation = 'source-atop'
+                        ctx.drawImage(spritesheet[sprite.spritesheet].normal, sx, sy, sw, sh, cx, cy, cw, ch);
+
+                        // ctx.globalAlpha = opacity
+                        // ctx.drawImage(spritesheet[sprite.spritesheet].pw, sx, sy, sw, sh, cx, cy, cw, ch);
                         
 
-                        ctx.globalCompositeOperation = 'difference'
+                        // ctx.globalCompositeOperation = 'difference'
 
-                        ctx.globalAlpha = color.r * opacity
-                        ctx.drawImage(spritesheet[sprite.spritesheet].pr, sx, sy, sw, sh, cx, cy, cw, ch);
-
-
-                        ctx.globalAlpha = color.g * opacity
-                        ctx.drawImage(spritesheet[sprite.spritesheet].pg, sx, sy, sw, sh, cx, cy, cw, ch);
+                        // ctx.globalAlpha = color.r * opacity
+                        // ctx.drawImage(spritesheet[sprite.spritesheet].pr, sx, sy, sw, sh, cx, cy, cw, ch);
 
 
-                        ctx.globalAlpha = color.b * opacity
-                        ctx.drawImage(spritesheet[sprite.spritesheet].pb, sx, sy, sw, sh, cx, cy, cw, ch);
+                        // ctx.globalAlpha = color.g * opacity
+                        // ctx.drawImage(spritesheet[sprite.spritesheet].pg, sx, sy, sw, sh, cx, cy, cw, ch);
 
-                        ctx.globalAlpha = opacity
-                        ctx.drawImage(spritesheet[sprite.spritesheet].pw, sx, sy, sw, sh, cx, cy, cw, ch);
+
+                        // ctx.globalAlpha = color.b * opacity
+                        // ctx.drawImage(spritesheet[sprite.spritesheet].pb, sx, sy, sw, sh, cx, cy, cw, ch);
+
+                        // ctx.globalAlpha = opacity
+                        // ctx.drawImage(spritesheet[sprite.spritesheet].pw, sx, sy, sw, sh, cx, cy, cw, ch);
 
                     } else {
                         ctx.globalAlpha = opacity
